@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS bids CASCADE;
+DROP INDEX IF EXISTS bids_destroyed_at_index;
