@@ -21,12 +21,12 @@ CREATE INDEX lots_end_at_index ON lots USING btree (end_at);
 CREATE INDEX lots_destroyed_at_index ON lots USING btree (destroyed_at);
 
 comment on column lots.status is 'Status';
-comment on column lots.title is 'Name in short';
+comment on column lots.title is 'Name (Number)';
 comment on column lots.description is 'Description';
-comment on column lots.start_price is 'Start price';
-comment on column lots.end_price is 'End price';
-comment on column lots.step_price is 'Step price';
+comment on column lots.start_price is 'Start Price';
+comment on column lots.end_price is 'End Price';
+comment on column lots.step_price is 'Step Price';
 comment on column lots.creator_id is 'Creator ID (User)';
 comment on column lots.winner_id is 'Winner ID (User)';
-comment on column lots.start_at is 'Start datetime (auction)';
-comment on column lots.end_at is 'End datetime (auction)';
+comment on column lots.start_at is 'Start Datetime (Auction)';
+comment on column lots.end_at is 'End Datetime (Auction)';

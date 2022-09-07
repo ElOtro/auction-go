@@ -21,7 +21,7 @@ func NewBidRepo(pg *postgres.Postgres) *BidRepo {
 // GetHistory -.
 func (r *BidRepo) GetAll() ([]*entity.Bid, error) {
 	// Construct the SQL query to retrieve all records.
-	query := `SELECT id, price, lot_id, bidder_id, created_at, updated_at
+	query := `SELECT id, amount, lot_id, bidder_id, created_at, updated_at
 			  FROM bids`
 
 	// Create a context with a 3-second timeout.
@@ -50,7 +50,7 @@ func (r *BidRepo) GetAll() ([]*entity.Bid, error) {
 		// using the pq.Array() adapter on the genres field here.
 		err := rows.Scan(
 			&bid.ID,
-			&bid.Price,
+			&bid.Amount,
 			&bid.LotID,
 			&bid.BidderID,
 			&bid.CreatedAt,
