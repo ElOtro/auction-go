@@ -7,10 +7,6 @@ help:
 run:
 	go run ./cmd/app
 
-## migrate: run the cmd/app application with migrations
-migrate:
-	go run -tags migrate ./cmd/app
-
 ## doc: output swagger files
 doc:
 	swag init -g ./internal/controller/http/v1/router.go

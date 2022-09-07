@@ -1,3 +1,4 @@
+CREATE EXTENSION IF NOT EXISTS "citext";
 CREATE TABLE users (
   id BIGSERIAL PRIMARY KEY,
   active bool DEFAULT false,
@@ -11,3 +12,9 @@ CREATE TABLE users (
 
 CREATE INDEX users_active_index ON users USING btree (active);
 CREATE UNIQUE INDEX users_email_index ON users USING btree (email);
+
+comment on column users.active is 'Active/Disabled';
+comment on column users.role is 'Role';
+comment on column users.name is 'Name';
+comment on column users.email is 'Email';
+comment on column users.password_hash is 'Hashed Password';

@@ -1,10 +1,11 @@
 CREATE TABLE lots (
   id BIGSERIAL PRIMARY KEY,
   status integer DEFAULT 1,
-  name text,
+  title text,
   description text,
-  start_price biginteger DEFAULT 0,
-  end_price biginteger DEFAULT 0,
+  start_price bigint DEFAULT 0,
+  end_price bigint DEFAULT 0,
+  step_price bigint DEFAULT 0,
   creator_id bigint REFERENCES users (id) ON DELETE SET NULL,
   winner_id bigint REFERENCES users (id) ON DELETE SET NULL,
   start_at timestamp(0) with time zone,
@@ -18,3 +19,14 @@ CREATE INDEX lots_status_index ON lots USING btree (status);
 CREATE INDEX lots_start_at_index ON lots USING btree (start_at);
 CREATE INDEX lots_end_at_index ON lots USING btree (end_at);
 CREATE INDEX lots_destroyed_at_index ON lots USING btree (destroyed_at);
+
+comment on column lots.status is 'Status';
+comment on column lots.title is 'Name in short';
+comment on column lots.description is 'Description';
+comment on column lots.start_price is 'Start price';
+comment on column lots.end_price is 'End price';
+comment on column lots.step_price is 'Step price';
+comment on column lots.creator_id is 'Creator ID (User)';
+comment on column lots.winner_id is 'Winner ID (User)';
+comment on column lots.start_at is 'Start datetime (auction)';
+comment on column lots.end_at is 'End datetime (auction)';

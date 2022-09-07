@@ -6,7 +6,7 @@ import "time"
 type Lot struct {
 	ID          int64      `json:"id"`
 	Status      int        `json:"status"`
-	Name        string     `json:"name"`
+	Title       string     `json:"title"`
 	Description string     `json:"description,omitempty"`
 	StartPrice  int64      `json:"start_price,omitempty"`
 	EndPrice    int64      `json:"end_price,omitempty"`

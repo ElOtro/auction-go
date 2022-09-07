@@ -21,7 +21,7 @@ func NewLotRepo(pg *postgres.Postgres) *LotRepo {
 // GetHistory -.
 func (m LotRepo) GetAll() ([]*entity.Lot, error) {
 	// Construct the SQL query to retrieve all records.
-	query := `SELECT id, status, name, description, start_price, end_price, creator_id, winner_id, 
+	query := `SELECT id, status, title, description, start_price, end_price, creator_id, winner_id, 
 	          start_at, end_at, created_at, updated_at
 		      FROM lots`
 
@@ -52,7 +52,7 @@ func (m LotRepo) GetAll() ([]*entity.Lot, error) {
 		err := rows.Scan(
 			&lot.ID,
 			&lot.Status,
-			&lot.Name,
+			&lot.Title,
 			&lot.Description,
 			&lot.StartPrice,
 			&lot.EndPrice,
