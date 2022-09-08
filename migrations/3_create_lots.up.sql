@@ -10,6 +10,7 @@ CREATE TABLE lots (
   winner_id bigint REFERENCES users (id) ON DELETE SET NULL,
   start_at timestamp(0) with time zone,
   end_at timestamp(0) with time zone,
+  notify bool DEFAULT false,
   destroyed_at timestamp(0) without time zone,
   created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
   updated_at timestamp(0) without time zone NOT NULL DEFAULT NOW()
@@ -30,3 +31,4 @@ comment on column lots.creator_id is 'Creator ID (User)';
 comment on column lots.winner_id is 'Winner ID (User)';
 comment on column lots.start_at is 'Start Datetime (Auction)';
 comment on column lots.end_at is 'End Datetime (Auction)';
+comment on column lots.notify is 'Notify On Start';
