@@ -7,6 +7,8 @@ import (
 
 	"github.com/ElOtro/auction-go/internal/entity"
 	"github.com/ElOtro/auction-go/pkg/postgres"
+	"github.com/jackc/pgconn"
+	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v4"
 )
 
@@ -76,7 +78,7 @@ func (r *UserRepo) GetAll() ([]*entity.User, error) {
 	return users, nil
 }
 
-// Get retrieve the User
+// Get the User
 func (r *UserRepo) Get(userID int64) (*entity.User, error) {
 	query := `
 		SELECT id, active, role, name, email, password_hash, created_at, updated_at FROM users
@@ -101,7 +103,7 @@ func (r *UserRepo) Get(userID int64) (*entity.User, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, pgx.ErrNoRows):
-			return nil, ErrRecordNotFound
+			return nil, entity.ErrRecordNotFound
 		default:
 			return nil, err
 		}
@@ -109,4 +111,33 @@ func (r *UserRepo) Get(userID int64) (*entity.User, error) {
 
 	return &user, nil
 
+}
+
+// Insert the User
+func (r *UserRepo) Insert(user *entity.User) error {
+	query := `
+		INSERT INTO users (name, email, password_hash, is_active) VALUES ($1, $2, $3, $4)
+		RETURNING id, created_at, updated_at`
+
+	args := []interface{}{user.Name, user.Email, user.Password.Hash, user.Active}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	// If the table already contains a record with this email address, then when we try
+	// to perform the insert there will be a violation of the UNIQUE "users_email_key"
+	// constraint that we set up in the previous chapter. We check for this error
+	// specifically, and return custom ErrDuplicateEmail error instead.
+	var e *pgconn.PgError
+	err := r.Pool.QueryRow(ctx, query, args...).Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		switch {
+		case errors.As(err, &e) && e.Code == pgerrcode.UniqueViolation:
+			return entity.ErrDuplicateEmail
+		default:
+			return err
+		}
+	}
+
+	return nil
 }

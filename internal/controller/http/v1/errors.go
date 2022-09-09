@@ -1,14 +1,8 @@
 package v1
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
-)
-
-// Define a custom ErrRecordNotFound error. We'll return this from our Get() method when
-// looking up a movie that doesn't exist in our database.
-var (
-	ErrRecordNotFound = errors.New("record not found")
 )
 
 func errorResponse(w http.ResponseWriter, r *http.Request, status int, message interface{}) {
@@ -29,6 +23,24 @@ func errorResponse(w http.ResponseWriter, r *http.Request, status int, message i
 func serverErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
 	message := "the server encountered a problem and could not process your request"
 	errorResponse(w, r, http.StatusInternalServerError, message)
+}
+
+// The notFoundResponse() method will be used to send a 404 Not Found status code and
+// JSON response to the client.
+func notFoundResponse(w http.ResponseWriter, r *http.Request) {
+	message := "the requested resource could not be found"
+	errorResponse(w, r, http.StatusNotFound, message)
+}
+
+// The methodNotAllowedResponse() method will be used to send a 405 Method Not Allowed
+// status code and JSON response to the client.
+func methodNotAllowedResponse(w http.ResponseWriter, r *http.Request) {
+	message := fmt.Sprintf("the %s method is not supported for this resource", r.Method)
+	errorResponse(w, r, http.StatusMethodNotAllowed, message)
+}
+
+func badRequestResponse(w http.ResponseWriter, r *http.Request, err error) {
+	errorResponse(w, r, http.StatusBadRequest, err.Error())
 }
 
 // Note that the errors parameter here has the type map[string]string, which is exactly

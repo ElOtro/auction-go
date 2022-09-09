@@ -1,14 +1,13 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/ElOtro/auction-go/internal/entity"
 )
 
 type UserRepository interface {
 	GetAll() ([]*entity.User, error)
 	Get(userID int64) (*entity.User, error)
+	Insert(user *entity.User) error
 }
 
 // UserUseCase -.
@@ -27,7 +26,7 @@ func NewUserUseCase(r UserRepository) *UserUseCase {
 func (uc *UserUseCase) List() ([]*entity.User, error) {
 	users, err := uc.repo.GetAll()
 	if err != nil {
-		return nil, fmt.Errorf("UserUseCase - List - s.repo.GetAll: %w", err)
+		return nil, err
 	}
 
 	return users, nil
@@ -37,8 +36,18 @@ func (uc *UserUseCase) List() ([]*entity.User, error) {
 func (uc *UserUseCase) Get(userID int64) (*entity.User, error) {
 	user, err := uc.repo.Get(userID)
 	if err != nil {
-		return nil, fmt.Errorf("UserUseCase - Get - s.repo.Get: %w", err)
+		return nil, err
 	}
 
 	return user, nil
+}
+
+// Get - getting user from store.
+func (uc *UserUseCase) Insert(user *entity.User) error {
+	err := uc.repo.Insert(user)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

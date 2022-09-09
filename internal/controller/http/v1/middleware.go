@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ElOtro/auction-go/internal/entity"
 	"github.com/pascaldekloe/jwt"
 )
 
@@ -80,7 +81,7 @@ func (c *UserController) authenticate(next http.Handler) http.Handler {
 		user, err := c.uc.Get(userID)
 		if err != nil {
 			switch {
-			case errors.Is(err, ErrRecordNotFound):
+			case errors.Is(err, entity.ErrRecordNotFound):
 				invalidAuthenticationTokenResponse(w, r)
 			default:
 				serverErrorResponse(w, r, err)
