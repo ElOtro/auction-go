@@ -22,7 +22,7 @@ func NewLotRepo(pg *postgres.Postgres) *LotRepo {
 func (m LotRepo) GetAll() ([]*entity.Lot, error) {
 	// Construct the SQL query to retrieve all records.
 	query := `SELECT id, status, title, description, start_price, end_price, creator_id, winner_id, 
-	          start_at, end_at, created_at, updated_at
+	          start_at, end_at, notify, created_at, updated_at
 		      FROM lots`
 
 	// Create a context with a 3-second timeout.
@@ -60,6 +60,7 @@ func (m LotRepo) GetAll() ([]*entity.Lot, error) {
 			&lot.WinnerID,
 			&lot.StartAt,
 			&lot.EndAt,
+			&lot.Notify,
 			&lot.CreatedAt,
 			&lot.UpdatedAt,
 		)

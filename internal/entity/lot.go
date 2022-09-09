@@ -15,6 +15,7 @@ type Lot struct {
 	StartAt     *time.Time `json:"start_at,omitempty"`
 	DestroyedAt *time.Time `json:"destroyed_at,omitempty"`
 	EndAt       *time.Time `json:"end_at,omitempty"`
+	Notify      bool       `json:"notify"`
 	CreatedAt   *time.Time `json:"created_at,omitempty"`
 	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 }
