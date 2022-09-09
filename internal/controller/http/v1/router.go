@@ -43,6 +43,7 @@ func (h *Handlers) Routes() *chi.Mux {
 	// Routers
 	mux.Route("/v1", func(r chi.Router) {
 		r.Route("/users", func(r chi.Router) {
+			r.Use(h.controllers.User.authenticate)
 			{
 				r.Get("/", h.controllers.User.List)
 			}

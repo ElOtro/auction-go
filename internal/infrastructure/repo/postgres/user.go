@@ -2,10 +2,12 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/ElOtro/auction-go/internal/entity"
 	"github.com/ElOtro/auction-go/pkg/postgres"
+	"github.com/jackc/pgx/v4"
 )
 
 // UserRepo -.
@@ -72,4 +74,39 @@ func (r *UserRepo) GetAll() ([]*entity.User, error) {
 	}
 
 	return users, nil
+}
+
+// Get retrieve the User
+func (r *UserRepo) Get(userID int64) (*entity.User, error) {
+	query := `
+		SELECT id, active, role, name, email, password_hash, created_at, updated_at FROM users
+		WHERE id = $1`
+
+	var user entity.User
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := r.Pool.QueryRow(ctx, query, userID).Scan(
+		&user.ID,
+		&user.Active,
+		&user.Role,
+		&user.Name,
+		&user.Email,
+		&user.Password.Hash,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, pgx.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &user, nil
+
 }

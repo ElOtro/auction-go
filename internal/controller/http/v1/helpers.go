@@ -2,8 +2,22 @@ package v1
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
+
+// Retrieve the "id" URL parameter from the current request context, then convert it to
+// an integer and return it. If the operation isn't successful, return 0 and an error.
+func readIDParam(paramID string, r *http.Request) (int64, error) {
+	id, err := strconv.ParseInt(chi.URLParam(r, paramID), 10, 64)
+	if err != nil || id < 1 {
+		return 0, errors.New("invalid id parameter")
+	}
+	return id, nil
+}
 
 // Define an envelope type.
 type envelope map[string]interface{}

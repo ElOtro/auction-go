@@ -6,6 +6,7 @@ import "time"
 type User struct {
 	ID          int64      `json:"id"`
 	Active      bool       `json:"active"`
+	Role        int        `json:"role"`
 	Name        string     `json:"name"`
 	Email       string     `json:"email"`
 	Password    password   `json:"-"`
@@ -16,6 +17,6 @@ type User struct {
 
 // Create a custom password type
 type password struct {
-	plaintext *string
-	hash      []byte
+	Plaintext *string
+	Hash      []byte
 }
