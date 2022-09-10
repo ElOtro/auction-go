@@ -113,10 +113,47 @@ func (r *UserRepo) Get(userID int64) (*entity.User, error) {
 
 }
 
+// GetByEmail the User details from the database based on the user's email address.
+// Because we have a UNIQUE constraint on the email column, this SQL query will only
+// return one record (or none at all, in which case we return a ErrRecordNotFound error).
+func (r *UserRepo) GetByEmail(email string) (*entity.User, error) {
+	query := `
+		SELECT id, active, role, name, email, password_hash, created_at, updated_at FROM users
+		WHERE email = $1`
+
+	var user entity.User
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := r.Pool.QueryRow(ctx, query, email).Scan(
+		&user.ID,
+		&user.Active,
+		&user.Role,
+		&user.Name,
+		&user.Email,
+		&user.Password.Hash,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, pgx.ErrNoRows):
+			return nil, entity.ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &user, nil
+
+}
+
 // Insert the User
 func (r *UserRepo) Insert(user *entity.User) error {
 	query := `
-		INSERT INTO users (name, email, password_hash, is_active) VALUES ($1, $2, $3, $4)
+		INSERT INTO users (name, email, password_hash, active) VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at, updated_at`
 
 	args := []interface{}{user.Name, user.Email, user.Password.Hash, user.Active}

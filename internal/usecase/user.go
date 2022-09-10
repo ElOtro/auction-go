@@ -7,6 +7,7 @@ import (
 type UserRepository interface {
 	GetAll() ([]*entity.User, error)
 	Get(userID int64) (*entity.User, error)
+	GetByEmail(email string) (*entity.User, error)
 	Insert(user *entity.User) error
 }
 
@@ -42,7 +43,17 @@ func (uc *UserUseCase) Get(userID int64) (*entity.User, error) {
 	return user, nil
 }
 
-// Get - getting user from store.
+// GetByEmail - getting user from store.
+func (uc *UserUseCase) GetByEmail(email string) (*entity.User, error) {
+	user, err := uc.repo.GetByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// Insert - inserting user to store.
 func (uc *UserUseCase) Insert(user *entity.User) error {
 	err := uc.repo.Insert(user)
 	if err != nil {

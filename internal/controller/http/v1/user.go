@@ -11,6 +11,7 @@ import (
 type UserUseCase interface {
 	List() ([]*entity.User, error)
 	Get(userID int64) (*entity.User, error)
+	GetByEmail(email string) (*entity.User, error)
 	Insert(*entity.User) error
 }
 
@@ -29,6 +30,12 @@ type listUserResponse struct {
 
 type showUserResponse struct {
 	User *entity.User `json:"user"`
+}
+
+type registerUser struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 // List         godoc
@@ -61,10 +68,10 @@ func (c *UserController) List(w http.ResponseWriter, r *http.Request) {
 // @Tags        users
 // @Accept      json
 // @Produce     json
-// @Success     200 {object} showUserResponse
-// @Router      /users/id [get]
+// @Success     200  {object} showUserResponse
+// @Router      /users/{id} [get]
 func (c *UserController) Show(w http.ResponseWriter, r *http.Request) {
-	id, err := readIDParam("userID", r)
+	id, err := readIDParam("ID", r)
 	if err != nil {
 		errorResponse(w, r, http.StatusBadRequest, err)
 		return
@@ -82,13 +89,18 @@ func (c *UserController) Show(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c *UserController) registerUserHandler(w http.ResponseWriter, r *http.Request) {
+// Get          godoc
+// @Summary     Register user
+// @Description add by json user
+// @Tags        session
+// @Accept      json
+// @Produce     json
+// @Param       user body     registerUser true "Register user"
+// @Success     200 {object} showUserResponse
+// @Router      /register [post]
+func (c *UserController) Register(w http.ResponseWriter, r *http.Request) {
 	// Create an anonymous struct to hold the expected data from the request body.
-	var input struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+	var input registerUser
 
 	// Parse the request body into the anonymous struct.
 	err := readJSON(w, r, &input)
@@ -97,10 +109,6 @@ func (c *UserController) registerUserHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	// Copy the data from the request body into a new User struct. Notice also that we
-	// set the Activated field to false, which isn't strictly necessary because the
-	// Activated field will have the zero-value of false by default. But setting this
-	// explicitly helps to make our intentions clear to anyone reading the code.
 	user := &entity.User{
 		Name:   input.Name,
 		Email:  input.Email,

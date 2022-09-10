@@ -16,9 +16,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/companies": {
-            "get": {
-                "description": "Show all company list",
+        "/auth": {
+            "post": {
+                "description": "Login user",
                 "consumes": [
                     "application/json"
                 ],
@@ -26,23 +26,23 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "companies"
+                    "users"
                 ],
-                "summary": "Show company list",
-                "operationId": "companyList",
+                "summary": "Login user",
+                "operationId": "email",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.listCompanyResponse"
+                            "$ref": "#/definitions/v1.listUserResponse"
                         }
                     }
                 }
             }
         },
-        "/products": {
+        "/bids": {
             "get": {
-                "description": "Show all product list",
+                "description": "Show all bid list",
                 "consumes": [
                     "application/json"
                 ],
@@ -50,15 +50,121 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "products"
+                    "bids"
                 ],
-                "summary": "Show product list",
-                "operationId": "productList",
+                "summary": "Show bid list",
+                "operationId": "bidList",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.listProductResponse"
+                            "$ref": "#/definitions/v1.listBidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/lots": {
+            "get": {
+                "description": "Show all lot list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lots"
+                ],
+                "summary": "Show lot list",
+                "operationId": "lotList",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.listLotResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "add by json user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "session"
+                ],
+                "summary": "Register user",
+                "parameters": [
+                    {
+                        "description": "Register user",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.registerUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.showUserResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Show all user list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Show user list",
+                "operationId": "userList",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.listUserResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Show user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Show user",
+                "operationId": "user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.showUserResponse"
                         }
                     }
                 }
@@ -66,60 +172,37 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "entity.Company": {
+        "entity.Bid": {
             "type": "object",
             "properties": {
-                "company_type": {
+                "amount": {
+                    "type": "integer"
+                },
+                "bidder_id": {
                     "type": "integer"
                 },
                 "created_at": {
                     "type": "string"
                 },
-                "destroyed_at": {
-                    "type": "string"
-                },
-                "details": {
-                    "$ref": "#/definitions/entity.CompanyDetails"
-                },
-                "full_name": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "logo": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
+                "lot_id": {
+                    "type": "integer"
                 },
                 "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "entity.CompanyDetails": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "inn": {
-                    "type": "string"
-                },
-                "kpp": {
-                    "type": "string"
-                },
-                "ogrn": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.Product": {
+        "entity.Lot": {
             "type": "object",
             "properties": {
                 "created_at": {
                     "type": "string"
+                },
+                "creator_id": {
+                    "type": "integer"
                 },
                 "description": {
                     "type": "string"
@@ -127,45 +210,119 @@ const docTemplate = `{
                 "destroyed_at": {
                     "type": "string"
                 },
+                "end_at": {
+                    "type": "string"
+                },
+                "end_price": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "notify": {
+                    "type": "boolean"
+                },
+                "start_at": {
+                    "type": "string"
+                },
+                "start_price": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "winner_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.User": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "destroyed_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
                 },
-                "price": {
-                    "type": "number"
-                },
-                "product_type": {
+                "role": {
                     "type": "integer"
-                },
-                "sku": {
-                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "v1.listCompanyResponse": {
+        "v1.listBidResponse": {
             "type": "object",
             "properties": {
-                "companies": {
+                "bids": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.Company"
+                        "$ref": "#/definitions/entity.Bid"
                     }
                 }
             }
         },
-        "v1.listProductResponse": {
+        "v1.listLotResponse": {
             "type": "object",
             "properties": {
-                "products": {
+                "lots": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.Product"
+                        "$ref": "#/definitions/entity.Lot"
                     }
+                }
+            }
+        },
+        "v1.listUserResponse": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.User"
+                    }
+                }
+            }
+        },
+        "v1.registerUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.showUserResponse": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/entity.User"
                 }
             }
         }
