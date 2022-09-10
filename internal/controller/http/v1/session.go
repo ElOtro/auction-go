@@ -23,6 +23,21 @@ type SessionController struct {
 	jwtSecret string
 }
 
+type registerUser struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type authUser struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type tokenResponse struct {
+	Token string `json:"token"`
+}
+
 func NewSessionController(uc SessionUseCase, jwtSecret string) *SessionController {
 	return &SessionController{uc: uc, jwtSecret: jwtSecret}
 }
@@ -115,18 +130,16 @@ func (c *SessionController) authenticate(next http.Handler) http.Handler {
 
 // List         godoc
 // @Summary     Login user
-// @Description Login user
+// @Description login user
 // @ID          email
-// @Tags        users
+// @Tags        sessions
 // @Accept      json
 // @Produce     json
-// @Success     200 {object} listUserResponse
+// @Param       login body     authUser true "Login"
+// @Success     201   {object} tokenResponse
 // @Router      /auth [post]
 func (c *SessionController) login(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+	var input authUser
 
 	err := readJSON(w, r, &input)
 	if err != nil {
@@ -193,7 +206,7 @@ func (c *SessionController) login(w http.ResponseWriter, r *http.Request) {
 
 	//Encode the token to JSON and send it in the response along with a 201 Created
 	//status code.
-	err = writeJSON(w, http.StatusCreated, envelope{"token": string(jwtBytes)}, nil)
+	err = writeJSON(w, http.StatusCreated, tokenResponse{Token: string(jwtBytes)}, nil)
 	if err != nil {
 		serverErrorResponse(w, r, err)
 	}
@@ -202,11 +215,12 @@ func (c *SessionController) login(w http.ResponseWriter, r *http.Request) {
 // Get          godoc
 // @Summary     Register user
 // @Description add by json user
-// @Tags        session
+// @Tags        sessions
 // @Accept      json
 // @Produce     json
 // @Param       user body     registerUser true "Register user"
-// @Success     200 {object} showUserResponse
+// @Success     201  {object} showUserResponse
+// @Failure     422
 // @Router      /register [post]
 func (c *SessionController) Register(w http.ResponseWriter, r *http.Request) {
 	// Create an anonymous struct to hold the expected data from the request body.
@@ -255,6 +269,7 @@ func (c *SessionController) Register(w http.ResponseWriter, r *http.Request) {
 		default:
 			serverErrorResponse(w, r, err)
 		}
+		return
 	}
 
 	// Write a JSON response containing the user data along with a 201 Created status

@@ -27,12 +27,6 @@ type showUserResponse struct {
 	User *entity.User `json:"user"`
 }
 
-type registerUser struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 // List         godoc
 // @Summary     Show user list
 // @Description Show all user list
@@ -63,7 +57,7 @@ func (c *UserController) List(w http.ResponseWriter, r *http.Request) {
 // @Tags        users
 // @Accept      json
 // @Produce     json
-// @Success     200  {object} showUserResponse
+// @Success     200 {object} showUserResponse
 // @Router      /users/{id} [get]
 func (c *UserController) Show(w http.ResponseWriter, r *http.Request) {
 	id, err := readIDParam("ID", r)

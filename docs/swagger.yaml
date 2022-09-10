@@ -65,6 +65,13 @@ definitions:
       updated_at:
         type: string
     type: object
+  v1.authUser:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
   v1.listBidResponse:
     properties:
       bids:
@@ -100,6 +107,11 @@ definitions:
       user:
         $ref: '#/definitions/entity.User'
     type: object
+  v1.tokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -111,18 +123,25 @@ paths:
     post:
       consumes:
       - application/json
-      description: Login user
+      description: login user
       operationId: email
+      parameters:
+      - description: Login
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/v1.authUser'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/v1.listUserResponse'
+            $ref: '#/definitions/v1.tokenResponse'
       summary: Login user
       tags:
-      - users
+      - sessions
   /bids:
     get:
       consumes:
@@ -170,13 +189,15 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/v1.showUserResponse'
+        "422":
+          description: Unprocessable Entity
       summary: Register user
       tags:
-      - session
+      - sessions
   /users:
     get:
       consumes:

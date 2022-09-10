@@ -18,7 +18,7 @@ const docTemplate = `{
     "paths": {
         "/auth": {
             "post": {
-                "description": "Login user",
+                "description": "login user",
                 "consumes": [
                     "application/json"
                 ],
@@ -26,15 +26,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "sessions"
                 ],
                 "summary": "Login user",
                 "operationId": "email",
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                "parameters": [
+                    {
+                        "description": "Login",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.listUserResponse"
+                            "$ref": "#/definitions/v1.authUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1.tokenResponse"
                         }
                     }
                 }
@@ -98,7 +109,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "session"
+                    "sessions"
                 ],
                 "summary": "Register user",
                 "parameters": [
@@ -113,11 +124,14 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/v1.showUserResponse"
                         }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
                     }
                 }
             }
@@ -271,6 +285,17 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.authUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.listBidResponse": {
             "type": "object",
             "properties": {
@@ -323,6 +348,14 @@ const docTemplate = `{
             "properties": {
                 "user": {
                     "$ref": "#/definitions/entity.User"
+                }
+            }
+        },
+        "v1.tokenResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
                 }
             }
         }
