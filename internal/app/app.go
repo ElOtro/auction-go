@@ -34,7 +34,7 @@ func Run(cfg *config.Config) {
 	useCases := usecase.NewUseCases(&pgModels)
 
 	// controllers
-	controllers := v1.NewControllers(&useCases)
+	controllers := v1.NewControllers(&useCases, cfg.JWT.Secret)
 
 	// HTTP Server
 	h := v1.NewHandlers(controllers)

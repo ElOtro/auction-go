@@ -42,9 +42,16 @@ func (h *Handlers) Routes() *chi.Mux {
 
 	// Routers
 	mux.Route("/v1", func(r chi.Router) {
+		r.Group(func(r chi.Router) {
+			r.Post("/register", h.controllers.Session.Register)
+			r.Post("/auth", h.controllers.Session.login)
+		})
+
 		r.Route("/users", func(r chi.Router) {
+			r.Use(h.controllers.Session.authenticate)
 			{
 				r.Get("/", h.controllers.User.List)
+				r.Get("/{ID}", h.controllers.User.Show)
 			}
 		})
 
