@@ -7,8 +7,8 @@ help:
 run:
 	go run ./cmd/app
 
-## doc: output swagger files
-doc:
+## swagger: output swagger files
+swagger:
 	swag init -g ./internal/controller/http/v1/router.go
 
 ## build: build the cmd/app application

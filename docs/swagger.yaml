@@ -1,71 +1,116 @@
 basePath: /v1
 definitions:
-  entity.Company:
+  entity.Bid:
     properties:
-      company_type:
+      amount:
+        type: integer
+      bidder_id:
         type: integer
       created_at:
-        type: string
-      destroyed_at:
-        type: string
-      details:
-        $ref: '#/definitions/entity.CompanyDetails'
-      full_name:
         type: string
       id:
         type: integer
-      logo:
-        type: string
-      name:
-        type: string
+      lot_id:
+        type: integer
       updated_at:
         type: string
     type: object
-  entity.CompanyDetails:
-    properties:
-      address:
-        type: string
-      inn:
-        type: string
-      kpp:
-        type: string
-      ogrn:
-        type: string
-    type: object
-  entity.Product:
+  entity.Lot:
     properties:
       created_at:
         type: string
+      creator_id:
+        type: integer
       description:
         type: string
       destroyed_at:
         type: string
+      end_at:
+        type: string
+      end_price:
+        type: integer
+      id:
+        type: integer
+      notify:
+        type: boolean
+      start_at:
+        type: string
+      start_price:
+        type: integer
+      status:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+      winner_id:
+        type: integer
+    type: object
+  entity.User:
+    properties:
+      active:
+        type: boolean
+      created_at:
+        type: string
+      destroyed_at:
+        type: string
+      email:
+        type: string
       id:
         type: integer
       name:
         type: string
-      price:
-        type: number
-      product_type:
+      role:
         type: integer
-      sku:
-        type: string
       updated_at:
         type: string
     type: object
-  v1.listCompanyResponse:
+  v1.authUser:
     properties:
-      companies:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  v1.listBidResponse:
+    properties:
+      bids:
         items:
-          $ref: '#/definitions/entity.Company'
+          $ref: '#/definitions/entity.Bid'
         type: array
     type: object
-  v1.listProductResponse:
+  v1.listLotResponse:
     properties:
-      products:
+      lots:
         items:
-          $ref: '#/definitions/entity.Product'
+          $ref: '#/definitions/entity.Lot'
         type: array
+    type: object
+  v1.listUserResponse:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/entity.User'
+        type: array
+    type: object
+  v1.registerUser:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  v1.showUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/entity.User'
+    type: object
+  v1.tokenResponse:
+    properties:
+      token:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -74,36 +119,115 @@ info:
   title: Clean API
   version: "1.0"
 paths:
-  /companies:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: login user
+      operationId: email
+      parameters:
+      - description: Login
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/v1.authUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+      summary: Login user
+      tags:
+      - sessions
+  /bids:
     get:
       consumes:
       - application/json
-      description: Show all company list
-      operationId: companyList
+      description: Show all bid list
+      operationId: bidList
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.listCompanyResponse'
-      summary: Show company list
+            $ref: '#/definitions/v1.listBidResponse'
+      summary: Show bid list
       tags:
-      - companies
-  /products:
+      - bids
+  /lots:
     get:
       consumes:
       - application/json
-      description: Show all product list
-      operationId: productList
+      description: Show all lot list
+      operationId: lotList
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.listProductResponse'
-      summary: Show product list
+            $ref: '#/definitions/v1.listLotResponse'
+      summary: Show lot list
       tags:
-      - products
+      - lots
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: add by json user
+      parameters:
+      - description: Register user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/v1.registerUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.showUserResponse'
+        "422":
+          description: Unprocessable Entity
+      summary: Register user
+      tags:
+      - sessions
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Show all user list
+      operationId: userList
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.listUserResponse'
+      summary: Show user list
+      tags:
+      - users
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Show user
+      operationId: user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.showUserResponse'
+      summary: Show user
+      tags:
+      - users
 swagger: "2.0"

@@ -8,6 +8,7 @@ import (
 
 type UserUseCase interface {
 	List() ([]*entity.User, error)
+	Get(userID int64) (*entity.User, error)
 }
 
 type UserController struct {
@@ -20,6 +21,10 @@ func NewUserController(uc UserUseCase) *UserController {
 
 type listUserResponse struct {
 	User []*entity.User `json:"users"`
+}
+
+type showUserResponse struct {
+	User *entity.User `json:"user"`
 }
 
 // List         godoc
@@ -40,6 +45,34 @@ func (c *UserController) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = writeJSON(w, http.StatusOK, listUserResponse{users}, nil)
+	if err != nil {
+		serverErrorResponse(w, r, err)
+	}
+}
+
+// Get          godoc
+// @Summary     Show user
+// @Description Show user
+// @ID          user
+// @Tags        users
+// @Accept      json
+// @Produce     json
+// @Success     200 {object} showUserResponse
+// @Router      /users/{id} [get]
+func (c *UserController) Show(w http.ResponseWriter, r *http.Request) {
+	id, err := readIDParam("ID", r)
+	if err != nil {
+		errorResponse(w, r, http.StatusBadRequest, err)
+		return
+	}
+	user, err := c.uc.Get(id)
+	if err != nil {
+		errorResponse(w, r, http.StatusInternalServerError, err)
+
+		return
+	}
+
+	err = writeJSON(w, http.StatusOK, showUserResponse{user}, nil)
 	if err != nil {
 		serverErrorResponse(w, r, err)
 	}

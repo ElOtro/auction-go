@@ -1,14 +1,7 @@
 package repo
 
 import (
-	"errors"
-
 	"github.com/ElOtro/auction-go/pkg/postgres"
-)
-
-var (
-	ErrRecordNotFound = errors.New("record not found")
-	ErrEditConflict   = errors.New("edit conflict")
 )
 
 // Create a Repo struct which wraps all repo.
