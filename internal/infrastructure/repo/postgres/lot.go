@@ -83,7 +83,7 @@ func (r LotRepo) GetAll() ([]*entity.Lot, error) {
 // Get method for fetching a specific record from the lots table.
 func (r LotRepo) Get(id int64) (*entity.Lot, error) {
 	if id < 1 {
-		return nil, ErrRecordNotFound
+		return nil, entity.ErrRecordNotFound
 	}
 
 	// Define the SQL query for retrieving data.
@@ -122,7 +122,7 @@ func (r LotRepo) Get(id int64) (*entity.Lot, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, pgx.ErrNoRows):
-			return nil, ErrRecordNotFound
+			return nil, entity.ErrRecordNotFound
 		default:
 			return nil, err
 		}
@@ -195,7 +195,7 @@ func (r LotRepo) Update(lot *entity.Lot) error {
 // Delete method for deleting a specific record.
 func (r LotRepo) Delete(id int64) error {
 	if id < 1 {
-		return ErrRecordNotFound
+		return entity.ErrRecordNotFound
 	}
 
 	// Construct the SQL query to delete the record.
@@ -222,7 +222,7 @@ func (r LotRepo) Delete(id int64) error {
 	// with the provided ID at the moment we tried to delete it. In that case we
 	// return an ErrRecordNotFound error.
 	if rowsAffected == 0 {
-		return ErrRecordNotFound
+		return entity.ErrRecordNotFound
 	}
 
 	return nil
