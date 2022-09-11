@@ -26,7 +26,7 @@ func NewLotUseCase(r LotRepository) *LotUseCase {
 func (uc *LotUseCase) List() ([]*entity.Lot, error) {
 	companies, err := uc.repo.GetAll()
 	if err != nil {
-		return nil, fmt.Errorf("LotUseCase - History - s.repo.GetHistory: %w", err)
+		return nil, fmt.Errorf("LotUseCase - History - s.repo.GetAll: %w", err)
 	}
 
 	return companies, nil

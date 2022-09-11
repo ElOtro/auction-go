@@ -20,10 +20,10 @@ func NewHandlers(controllers Controllers) *Handlers {
 	return &Handlers{controllers: controllers}
 }
 
-// NewRouter -.
+// NewHandlers -.
 // Swagger spec:
-// @title       Clean API
-// @description Using an api service as an example
+// @title       Auction API
+// @description Using an api service
 // @version     1.0
 // @host        localhost:8080
 // @BasePath    /v1

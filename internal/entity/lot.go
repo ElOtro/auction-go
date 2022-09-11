@@ -10,6 +10,7 @@ type Lot struct {
 	Description string     `json:"description,omitempty"`
 	StartPrice  int64      `json:"start_price,omitempty"`
 	EndPrice    int64      `json:"end_price,omitempty"`
+	StepPrice   int64      `json:"step_price,omitempty"`
 	CreatorID   int64      `json:"creator_id,omitempty"`
 	WinnerID    int64      `json:"winner_id,omitempty"`
 	StartAt     *time.Time `json:"start_at,omitempty"`

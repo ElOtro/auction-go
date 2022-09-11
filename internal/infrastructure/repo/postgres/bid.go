@@ -18,7 +18,7 @@ func NewBidRepo(pg *postgres.Postgres) *BidRepo {
 	return &BidRepo{pg}
 }
 
-// GetHistory -.
+// GetAll -.
 func (r *BidRepo) GetAll() ([]*entity.Bid, error) {
 	// Construct the SQL query to retrieve all records.
 	query := `SELECT id, amount, lot_id, bidder_id, created_at, updated_at
