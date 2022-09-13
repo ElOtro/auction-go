@@ -7,7 +7,7 @@ import (
 )
 
 type BidRepository interface {
-	GetAll() ([]*entity.Bid, error)
+	GetAll(lotID int64) ([]*entity.Bid, error)
 }
 
 // BidUseCase -.
@@ -23,8 +23,8 @@ func NewBidUseCase(r BidRepository) *BidUseCase {
 }
 
 // History - getting translate history from store.
-func (uc *BidUseCase) List() ([]*entity.Bid, error) {
-	companies, err := uc.repo.GetAll()
+func (uc *BidUseCase) List(lotID int64) ([]*entity.Bid, error) {
+	companies, err := uc.repo.GetAll(lotID)
 	if err != nil {
 		return nil, fmt.Errorf("BidUseCase - List - s.repo.List: %w", err)
 	}

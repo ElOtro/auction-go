@@ -18,11 +18,10 @@ func NewBidRepo(pg *postgres.Postgres) *BidRepo {
 	return &BidRepo{pg}
 }
 
-// GetHistory -.
-func (r *BidRepo) GetAll() ([]*entity.Bid, error) {
+// GetAll method for fetching all records from the bids table for given lot.
+func (r *BidRepo) GetAll(lotID int64) ([]*entity.Bid, error) {
 	// Construct the SQL query to retrieve all records.
-	query := `SELECT id, amount, lot_id, bidder_id, created_at, updated_at
-			  FROM bids`
+	query := "SELECT id, amount, bidder_id, created_at, updated_at FROM bids WHERE lot_id = $1"
 
 	// Create a context with a 3-second timeout.
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -35,8 +34,6 @@ func (r *BidRepo) GetAll() ([]*entity.Bid, error) {
 		return nil, err
 	}
 
-	// Importantly, defer a call to rows.Close() to ensure that the resultset is closed
-	// before GetAll() returns.
 	defer rows.Close()
 
 	bids := []*entity.Bid{}
@@ -51,7 +48,6 @@ func (r *BidRepo) GetAll() ([]*entity.Bid, error) {
 		err := rows.Scan(
 			&bid.ID,
 			&bid.Amount,
-			&bid.LotID,
 			&bid.BidderID,
 			&bid.CreatedAt,
 			&bid.UpdatedAt,

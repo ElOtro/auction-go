@@ -18,8 +18,8 @@ func NewLotRepo(pg *postgres.Postgres) *LotRepo {
 	return &LotRepo{pg}
 }
 
-// GetHistory -.
-func (m LotRepo) GetAll() ([]*entity.Lot, error) {
+// GetAll method for fetching all records from the lots table.
+func (r LotRepo) GetAll() ([]*entity.Lot, error) {
 	// Construct the SQL query to retrieve all records.
 	query := `SELECT id, status, title, description, start_price, end_price, creator_id, winner_id, 
 	          start_at, end_at, notify, created_at, updated_at
@@ -31,7 +31,7 @@ func (m LotRepo) GetAll() ([]*entity.Lot, error) {
 
 	// Use QueryContext() to execute the query. This returns a sql.Rows resultset
 	// containing the result.
-	rows, err := m.Pool.Query(ctx, query)
+	rows, err := r.Pool.Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
