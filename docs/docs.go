@@ -237,7 +237,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.lotRequest"
+                            "$ref": "#/definitions/v1.lotUpdateRequest"
                         }
                     }
                 ],
@@ -344,6 +344,39 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "entity.BaseLot": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "Some Precious Items"
+                },
+                "end_at": {
+                    "type": "string",
+                    "example": "2022-09-09T13:45:00+03:00"
+                },
+                "notify": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "start_at": {
+                    "type": "string",
+                    "example": "2022-09-09T12:45:00+03:00"
+                },
+                "start_price": {
+                    "type": "integer",
+                    "example": 100000
+                },
+                "step_price": {
+                    "type": "integer",
+                    "example": 15000
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Lot #1"
+                }
+            }
+        },
         "entity.Bid": {
             "type": "object",
             "properties": {
@@ -378,9 +411,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "description": {
-                    "type": "string"
-                },
-                "destroyed_at": {
                     "type": "string"
                 },
                 "end_at": {
@@ -491,7 +521,23 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.lotInput": {
+        "v1.lotRequest": {
+            "type": "object",
+            "properties": {
+                "lot": {
+                    "$ref": "#/definitions/entity.BaseLot"
+                }
+            }
+        },
+        "v1.lotResponse": {
+            "type": "object",
+            "properties": {
+                "lot": {
+                    "$ref": "#/definitions/entity.Lot"
+                }
+            }
+        },
+        "v1.lotUpdate": {
             "type": "object",
             "properties": {
                 "description": {
@@ -514,6 +560,10 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 100000
                 },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                },
                 "step_price": {
                     "type": "integer",
                     "example": 15000
@@ -524,19 +574,11 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.lotRequest": {
+        "v1.lotUpdateRequest": {
             "type": "object",
             "properties": {
                 "lot": {
-                    "$ref": "#/definitions/v1.lotInput"
-                }
-            }
-        },
-        "v1.lotResponse": {
-            "type": "object",
-            "properties": {
-                "lot": {
-                    "$ref": "#/definitions/entity.Lot"
+                    "$ref": "#/definitions/v1.lotUpdate"
                 }
             }
         },

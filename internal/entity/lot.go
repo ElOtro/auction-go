@@ -15,6 +15,16 @@ const (
 	LotFinished
 )
 
+type BaseLot struct {
+	Title       string     `json:"title" example:"Lot #1"`
+	Description string     `json:"description,omitempty" example:"Some Precious Items"`
+	StartPrice  *int64     `json:"start_price,omitempty" example:"100000"`
+	StepPrice   *int64     `json:"step_price,omitempty" example:"15000"`
+	StartAt     *time.Time `json:"start_at,omitempty" example:"2022-09-09T12:45:00+03:00"`
+	EndAt       *time.Time `json:"end_at,omitempty" example:"2022-09-09T13:45:00+03:00"`
+	Notify      bool       `json:"notify" example:"true"`
+}
+
 // Lot type
 // @Description Lot
 type Lot struct {
@@ -30,7 +40,7 @@ type Lot struct {
 	StartAt     time.Time  `json:"start_at,omitempty"`
 	EndAt       time.Time  `json:"end_at,omitempty"`
 	Notify      bool       `json:"notify"`
-	DestroyedAt *time.Time `json:"destroyed_at,omitempty"`
+	DestroyedAt *time.Time `json:"-"`
 	CreatedAt   *time.Time `json:"created_at,omitempty"`
 	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 }

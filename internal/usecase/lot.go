@@ -56,7 +56,7 @@ func (uc *LotUseCase) Create(lot *entity.Lot) error {
 
 // Update - updating a lot to store.
 func (uc *LotUseCase) Update(lot *entity.Lot) error {
-	err := uc.repo.Insert(lot)
+	err := uc.repo.Update(lot)
 	if err != nil {
 		return err
 	}

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/ElOtro/auction-go/internal/entity"
 	"github.com/ElOtro/auction-go/internal/validator"
@@ -34,18 +33,17 @@ type lotResponse struct {
 	Lot *entity.Lot `json:"lot"`
 }
 
-type lotInput struct {
-	Title       string     `json:"title" example:"Lot #1"`
-	Description string     `json:"description,omitempty" example:"Some Precious Items"`
-	StartPrice  *int64     `json:"start_price,omitempty" example:"100000"`
-	StepPrice   *int64     `json:"step_price,omitempty" example:"15000"`
-	StartAt     *time.Time `json:"start_at,omitempty" example:"2022-09-09T12:45:00+03:00"`
-	EndAt       *time.Time `json:"end_at,omitempty" example:"2022-09-09T13:45:00+03:00"`
-	Notify      bool       `json:"notify" example:"true"`
+type lotRequest struct {
+	Lot *entity.BaseLot `json:"lot"`
 }
 
-type lotRequest struct {
-	Lot *lotInput `json:"lot"`
+type lotUpdate struct {
+	Status *entity.LotStatus `json:"status" example:"1"`
+	*entity.BaseLot
+}
+
+type lotUpdateRequest struct {
+	Lot lotUpdate `json:"lot"`
 }
 
 // @Summary     Show lot list
@@ -76,7 +74,7 @@ func (c *LotController) List(w http.ResponseWriter, r *http.Request) {
 // @Tags        lots
 // @Accept      json
 // @Produce     json
-// @Param       id  path     int        true "Lot ID" Format(int64)
+// @Param       id path int true "Lot ID" Format(int64)
 // @Success     200 {object} lotResponse
 // @Failure     404
 // @Failure     500
@@ -117,9 +115,7 @@ func (c *LotController) Show(w http.ResponseWriter, r *http.Request) {
 // @Failure     500
 // @Router      /lots [post]
 func (c *LotController) Create(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		Lot *lotInput `json:"lot"`
-	}
+	var input lotRequest
 
 	err := readJSON(w, r, &input)
 	if err != nil {
@@ -176,8 +172,8 @@ func (c *LotController) Create(w http.ResponseWriter, r *http.Request) {
 // @Tags        lots
 // @Accept      json
 // @Produce     json
-// @Param       id path int true "Lot ID" Format(int64)
-// @Param       lot body     lotRequest true "Update Lot"
+// @Param       id  path     int        true "Lot ID" Format(int64)
+// @Param       lot body     lotUpdateRequest true "Update Lot"
 // @Success     200 {object} lotResponse
 // @Failure     400
 // @Failure     500
@@ -204,9 +200,7 @@ func (c *LotController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Declare an input struct to hold the expected data from the client.
-	var input struct {
-		Lot *lotInput `json:"lot"`
-	}
+	var input lotUpdateRequest
 
 	err = readJSON(w, r, &input)
 	if err != nil {
@@ -215,6 +209,10 @@ func (c *LotController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var fields = input.Lot
+
+	if fields.Status != nil {
+		lot.Status = *fields.Status
+	}
 
 	if fields.Title != "" {
 		lot.Title = fields.Title

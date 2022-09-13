@@ -1,5 +1,29 @@
 basePath: /v1
 definitions:
+  entity.BaseLot:
+    properties:
+      description:
+        example: Some Precious Items
+        type: string
+      end_at:
+        example: "2022-09-09T13:45:00+03:00"
+        type: string
+      notify:
+        example: true
+        type: boolean
+      start_at:
+        example: "2022-09-09T12:45:00+03:00"
+        type: string
+      start_price:
+        example: 100000
+        type: integer
+      step_price:
+        example: 15000
+        type: integer
+      title:
+        example: 'Lot #1'
+        type: string
+    type: object
   entity.Bid:
     properties:
       amount:
@@ -23,8 +47,6 @@ definitions:
       creator_id:
         type: integer
       description:
-        type: string
-      destroyed_at:
         type: string
       end_at:
         type: string
@@ -96,7 +118,17 @@ definitions:
           $ref: '#/definitions/entity.User'
         type: array
     type: object
-  v1.lotInput:
+  v1.lotRequest:
+    properties:
+      lot:
+        $ref: '#/definitions/entity.BaseLot'
+    type: object
+  v1.lotResponse:
+    properties:
+      lot:
+        $ref: '#/definitions/entity.Lot'
+    type: object
+  v1.lotUpdate:
     properties:
       description:
         example: Some Precious Items
@@ -113,6 +145,9 @@ definitions:
       start_price:
         example: 100000
         type: integer
+      status:
+        example: 1
+        type: integer
       step_price:
         example: 15000
         type: integer
@@ -120,15 +155,10 @@ definitions:
         example: 'Lot #1'
         type: string
     type: object
-  v1.lotRequest:
+  v1.lotUpdateRequest:
     properties:
       lot:
-        $ref: '#/definitions/v1.lotInput'
-    type: object
-  v1.lotResponse:
-    properties:
-      lot:
-        $ref: '#/definitions/entity.Lot'
+        $ref: '#/definitions/v1.lotUpdate'
     type: object
   v1.registerUser:
     properties:
@@ -303,7 +333,7 @@ paths:
         name: lot
         required: true
         schema:
-          $ref: '#/definitions/v1.lotRequest'
+          $ref: '#/definitions/v1.lotUpdateRequest'
       produces:
       - application/json
       responses:
