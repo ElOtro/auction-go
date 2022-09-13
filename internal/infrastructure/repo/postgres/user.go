@@ -22,7 +22,7 @@ func NewUserRepo(pg *postgres.Postgres) *UserRepo {
 	return &UserRepo{pg}
 }
 
-// GetHistory -.
+// GetAll -.
 func (r *UserRepo) GetAll() ([]*entity.User, error) {
 	// Construct the SQL query to retrieve all records.
 	query := `SELECT id, created_at, name, email, password_hash, is_active, updated_at

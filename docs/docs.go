@@ -97,6 +97,164 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "create lot",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lots"
+                ],
+                "summary": "Create lot",
+                "operationId": "create-lot",
+                "parameters": [
+                    {
+                        "description": "Create Lot",
+                        "name": "lot",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.lotRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/lots/{id}": {
+            "get": {
+                "description": "show lot",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lots"
+                ],
+                "summary": "Show lot",
+                "operationId": "lot",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Lot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.lotResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete lot",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lots"
+                ],
+                "summary": "Delete lot",
+                "operationId": "delete-lot",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Lot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "patch": {
+                "description": "update lot",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lots"
+                ],
+                "summary": "Update lot",
+                "operationId": "update-lot",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Lot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Lot",
+                        "name": "lot",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.lotUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.lotResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
             }
         },
         "/register": {
@@ -186,6 +344,39 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "entity.BaseLot": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "Some Precious Items"
+                },
+                "end_at": {
+                    "type": "string",
+                    "example": "2022-09-09T13:45:00+03:00"
+                },
+                "notify": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "start_at": {
+                    "type": "string",
+                    "example": "2022-09-09T12:45:00+03:00"
+                },
+                "start_price": {
+                    "type": "integer",
+                    "example": 100000
+                },
+                "step_price": {
+                    "type": "integer",
+                    "example": 15000
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Lot #1"
+                }
+            }
+        },
         "entity.Bid": {
             "type": "object",
             "properties": {
@@ -210,6 +401,7 @@ const docTemplate = `{
             }
         },
         "entity.Lot": {
+            "description": "Lot",
             "type": "object",
             "properties": {
                 "created_at": {
@@ -219,9 +411,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "description": {
-                    "type": "string"
-                },
-                "destroyed_at": {
                     "type": "string"
                 },
                 "end_at": {
@@ -243,6 +432,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
+                    "type": "integer"
+                },
+                "step_price": {
                     "type": "integer"
                 },
                 "title": {
@@ -329,6 +521,67 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.lotRequest": {
+            "type": "object",
+            "properties": {
+                "lot": {
+                    "$ref": "#/definitions/entity.BaseLot"
+                }
+            }
+        },
+        "v1.lotResponse": {
+            "type": "object",
+            "properties": {
+                "lot": {
+                    "$ref": "#/definitions/entity.Lot"
+                }
+            }
+        },
+        "v1.lotUpdate": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "Some Precious Items"
+                },
+                "end_at": {
+                    "type": "string",
+                    "example": "2022-09-09T13:45:00+03:00"
+                },
+                "notify": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "start_at": {
+                    "type": "string",
+                    "example": "2022-09-09T12:45:00+03:00"
+                },
+                "start_price": {
+                    "type": "integer",
+                    "example": 100000
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "step_price": {
+                    "type": "integer",
+                    "example": 15000
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Lot #1"
+                }
+            }
+        },
+        "v1.lotUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "lot": {
+                    "$ref": "#/definitions/v1.lotUpdate"
+                }
+            }
+        },
         "v1.registerUser": {
             "type": "object",
             "properties": {
@@ -368,8 +621,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/v1",
 	Schemes:          []string{},
-	Title:            "Clean API",
-	Description:      "Using an api service as an example",
+	Title:            "Auction API",
+	Description:      "Using an api service",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }
