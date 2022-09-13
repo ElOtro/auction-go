@@ -1,6 +1,8 @@
 package validator
 
-import "regexp"
+import (
+	"regexp"
+)
 
 // Declare a regular expression for sanity checking the format of email addresses (we'll
 // use this later in the book). If you're interested, this regular expression pattern is

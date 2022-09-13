@@ -58,6 +58,10 @@ func (h *Handlers) Routes() *chi.Mux {
 		r.Route("/lots", func(r chi.Router) {
 			{
 				r.Get("/", h.controllers.Lot.List)
+				r.Get("/{ID}", h.controllers.Lot.Show)
+				r.Post("/", h.controllers.Lot.Create)
+				r.Patch("/{ID}", h.controllers.Lot.Update)
+				r.Delete("/{ID}", h.controllers.Lot.Delete)
 			}
 		})
 
