@@ -1,109 +1,407 @@
 basePath: /v1
 definitions:
-  entity.Company:
+  entity.BaseLot:
     properties:
-      company_type:
+      description:
+        example: Some Precious Items
+        type: string
+      end_at:
+        example: "2022-09-09T13:45:00+03:00"
+        type: string
+      notify:
+        example: true
+        type: boolean
+      start_at:
+        example: "2022-09-09T12:45:00+03:00"
+        type: string
+      start_price:
+        example: 100000
+        type: integer
+      step_price:
+        example: 15000
+        type: integer
+      title:
+        example: 'Lot #1'
+        type: string
+    type: object
+  entity.Bid:
+    properties:
+      amount:
+        type: integer
+      bidder_id:
         type: integer
       created_at:
-        type: string
-      destroyed_at:
-        type: string
-      details:
-        $ref: '#/definitions/entity.CompanyDetails'
-      full_name:
         type: string
       id:
         type: integer
-      logo:
-        type: string
-      name:
-        type: string
+      lot_id:
+        type: integer
       updated_at:
         type: string
     type: object
-  entity.CompanyDetails:
-    properties:
-      address:
-        type: string
-      inn:
-        type: string
-      kpp:
-        type: string
-      ogrn:
-        type: string
-    type: object
-  entity.Product:
+  entity.Lot:
+    description: Lot
     properties:
       created_at:
         type: string
+      creator_id:
+        type: integer
       description:
         type: string
+      end_at:
+        type: string
+      end_price:
+        type: integer
+      id:
+        type: integer
+      notify:
+        type: boolean
+      start_at:
+        type: string
+      start_price:
+        type: integer
+      status:
+        type: integer
+      step_price:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+      winner_id:
+        type: integer
+    type: object
+  entity.User:
+    properties:
+      active:
+        type: boolean
+      created_at:
+        type: string
       destroyed_at:
+        type: string
+      email:
         type: string
       id:
         type: integer
       name:
         type: string
-      price:
-        type: number
-      product_type:
+      role:
         type: integer
-      sku:
-        type: string
       updated_at:
         type: string
     type: object
-  v1.listCompanyResponse:
+  v1.authUser:
     properties:
-      companies:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  v1.listBidResponse:
+    properties:
+      bids:
         items:
-          $ref: '#/definitions/entity.Company'
+          $ref: '#/definitions/entity.Bid'
         type: array
     type: object
-  v1.listProductResponse:
+  v1.listLotResponse:
     properties:
-      products:
+      lots:
         items:
-          $ref: '#/definitions/entity.Product'
+          $ref: '#/definitions/entity.Lot'
         type: array
+    type: object
+  v1.listUserResponse:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/entity.User'
+        type: array
+    type: object
+  v1.lotRequest:
+    properties:
+      lot:
+        $ref: '#/definitions/entity.BaseLot'
+    type: object
+  v1.lotResponse:
+    properties:
+      lot:
+        $ref: '#/definitions/entity.Lot'
+    type: object
+  v1.lotUpdate:
+    properties:
+      description:
+        example: Some Precious Items
+        type: string
+      end_at:
+        example: "2022-09-09T13:45:00+03:00"
+        type: string
+      notify:
+        example: true
+        type: boolean
+      start_at:
+        example: "2022-09-09T12:45:00+03:00"
+        type: string
+      start_price:
+        example: 100000
+        type: integer
+      status:
+        example: 1
+        type: integer
+      step_price:
+        example: 15000
+        type: integer
+      title:
+        example: 'Lot #1'
+        type: string
+    type: object
+  v1.lotUpdateRequest:
+    properties:
+      lot:
+        $ref: '#/definitions/v1.lotUpdate'
+    type: object
+  v1.registerUser:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  v1.showUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/entity.User'
+    type: object
+  v1.tokenResponse:
+    properties:
+      token:
+        type: string
     type: object
 host: localhost:8080
 info:
   contact: {}
-  description: Using an api service as an example
-  title: Clean API
+  description: Using an api service
+  title: Auction API
   version: "1.0"
 paths:
-  /companies:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: login user
+      operationId: email
+      parameters:
+      - description: Login
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/v1.authUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+      summary: Login user
+      tags:
+      - sessions
+  /bids:
     get:
       consumes:
       - application/json
-      description: Show all company list
-      operationId: companyList
+      description: Show all bid list
+      operationId: bidList
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.listCompanyResponse'
-      summary: Show company list
+            $ref: '#/definitions/v1.listBidResponse'
+      summary: Show bid list
       tags:
-      - companies
-  /products:
+      - bids
+  /lots:
     get:
       consumes:
       - application/json
-      description: Show all product list
-      operationId: productList
+      description: Show all lot list
+      operationId: lotList
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.listProductResponse'
-      summary: Show product list
+            $ref: '#/definitions/v1.listLotResponse'
+      summary: Show lot list
       tags:
-      - products
+      - lots
+    post:
+      consumes:
+      - application/json
+      description: create lot
+      operationId: create-lot
+      parameters:
+      - description: Create Lot
+        in: body
+        name: lot
+        required: true
+        schema:
+          $ref: '#/definitions/v1.lotRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Create lot
+      tags:
+      - lots
+  /lots/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete lot
+      operationId: delete-lot
+      parameters:
+      - description: Lot ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Delete lot
+      tags:
+      - lots
+    get:
+      consumes:
+      - application/json
+      description: show lot
+      operationId: lot
+      parameters:
+      - description: Lot ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.lotResponse'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Show lot
+      tags:
+      - lots
+    patch:
+      consumes:
+      - application/json
+      description: update lot
+      operationId: update-lot
+      parameters:
+      - description: Lot ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Lot
+        in: body
+        name: lot
+        required: true
+        schema:
+          $ref: '#/definitions/v1.lotUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.lotResponse'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Update lot
+      tags:
+      - lots
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: add by json user
+      parameters:
+      - description: Register user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/v1.registerUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.showUserResponse'
+        "422":
+          description: Unprocessable Entity
+      summary: Register user
+      tags:
+      - sessions
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Show all user list
+      operationId: userList
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.listUserResponse'
+      summary: Show user list
+      tags:
+      - users
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Show user
+      operationId: user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.showUserResponse'
+      summary: Show user
+      tags:
+      - users
 swagger: "2.0"

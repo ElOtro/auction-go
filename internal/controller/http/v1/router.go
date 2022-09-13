@@ -20,10 +20,10 @@ func NewHandlers(controllers Controllers) *Handlers {
 	return &Handlers{controllers: controllers}
 }
 
-// NewRouter -.
+// NewHandlers -.
 // Swagger spec:
-// @title       Clean API
-// @description Using an api service as an example
+// @title       Auction API
+// @description Using an api service
 // @version     1.0
 // @host        localhost:8080
 // @BasePath    /v1
@@ -42,15 +42,26 @@ func (h *Handlers) Routes() *chi.Mux {
 
 	// Routers
 	mux.Route("/v1", func(r chi.Router) {
+		r.Group(func(r chi.Router) {
+			r.Post("/register", h.controllers.Session.Register)
+			r.Post("/auth", h.controllers.Session.login)
+		})
+
 		r.Route("/users", func(r chi.Router) {
+			r.Use(h.controllers.Session.authenticate)
 			{
 				r.Get("/", h.controllers.User.List)
+				r.Get("/{ID}", h.controllers.User.Show)
 			}
 		})
 
 		r.Route("/lots", func(r chi.Router) {
 			{
 				r.Get("/", h.controllers.Lot.List)
+				r.Get("/{ID}", h.controllers.Lot.Show)
+				r.Post("/", h.controllers.Lot.Create)
+				r.Patch("/{ID}", h.controllers.Lot.Update)
+				r.Delete("/{ID}", h.controllers.Lot.Delete)
 			}
 		})
 

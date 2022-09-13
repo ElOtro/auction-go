@@ -1,17 +1,17 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Using an api service as an example",
-        "title": "Clean API",
+        "description": "Using an api service",
+        "title": "Auction API",
         "contact": {},
         "version": "1.0"
     },
     "host": "localhost:8080",
     "basePath": "/v1",
     "paths": {
-        "/companies": {
-            "get": {
-                "description": "Show all company list",
+        "/auth": {
+            "post": {
+                "description": "login user",
                 "consumes": [
                     "application/json"
                 ],
@@ -19,23 +19,34 @@
                     "application/json"
                 ],
                 "tags": [
-                    "companies"
+                    "sessions"
                 ],
-                "summary": "Show company list",
-                "operationId": "companyList",
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                "summary": "Login user",
+                "operationId": "email",
+                "parameters": [
+                    {
+                        "description": "Login",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.listCompanyResponse"
+                            "$ref": "#/definitions/v1.authUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1.tokenResponse"
                         }
                     }
                 }
             }
         },
-        "/products": {
+        "/bids": {
             "get": {
-                "description": "Show all product list",
+                "description": "Show all bid list",
                 "consumes": [
                     "application/json"
                 ],
@@ -43,15 +54,282 @@
                     "application/json"
                 ],
                 "tags": [
-                    "products"
+                    "bids"
                 ],
-                "summary": "Show product list",
-                "operationId": "productList",
+                "summary": "Show bid list",
+                "operationId": "bidList",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.listProductResponse"
+                            "$ref": "#/definitions/v1.listBidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/lots": {
+            "get": {
+                "description": "Show all lot list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lots"
+                ],
+                "summary": "Show lot list",
+                "operationId": "lotList",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.listLotResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create lot",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lots"
+                ],
+                "summary": "Create lot",
+                "operationId": "create-lot",
+                "parameters": [
+                    {
+                        "description": "Create Lot",
+                        "name": "lot",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.lotRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/lots/{id}": {
+            "get": {
+                "description": "show lot",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lots"
+                ],
+                "summary": "Show lot",
+                "operationId": "lot",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Lot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.lotResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete lot",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lots"
+                ],
+                "summary": "Delete lot",
+                "operationId": "delete-lot",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Lot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "patch": {
+                "description": "update lot",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lots"
+                ],
+                "summary": "Update lot",
+                "operationId": "update-lot",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Lot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Lot",
+                        "name": "lot",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.lotUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.lotResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "add by json user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sessions"
+                ],
+                "summary": "Register user",
+                "parameters": [
+                    {
+                        "description": "Register user",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.registerUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1.showUserResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Show all user list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Show user list",
+                "operationId": "userList",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.listUserResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Show user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Show user",
+                "operationId": "user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.showUserResponse"
                         }
                     }
                 }
@@ -59,65 +337,123 @@
         }
     },
     "definitions": {
-        "entity.Company": {
+        "entity.BaseLot": {
             "type": "object",
             "properties": {
-                "company_type": {
+                "description": {
+                    "type": "string",
+                    "example": "Some Precious Items"
+                },
+                "end_at": {
+                    "type": "string",
+                    "example": "2022-09-09T13:45:00+03:00"
+                },
+                "notify": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "start_at": {
+                    "type": "string",
+                    "example": "2022-09-09T12:45:00+03:00"
+                },
+                "start_price": {
+                    "type": "integer",
+                    "example": 100000
+                },
+                "step_price": {
+                    "type": "integer",
+                    "example": 15000
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Lot #1"
+                }
+            }
+        },
+        "entity.Bid": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "bidder_id": {
                     "type": "integer"
                 },
                 "created_at": {
                     "type": "string"
                 },
-                "destroyed_at": {
-                    "type": "string"
-                },
-                "details": {
-                    "$ref": "#/definitions/entity.CompanyDetails"
-                },
-                "full_name": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "logo": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
+                "lot_id": {
+                    "type": "integer"
                 },
                 "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "entity.CompanyDetails": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "inn": {
-                    "type": "string"
-                },
-                "kpp": {
-                    "type": "string"
-                },
-                "ogrn": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.Product": {
+        "entity.Lot": {
+            "description": "Lot",
             "type": "object",
             "properties": {
                 "created_at": {
                     "type": "string"
+                },
+                "creator_id": {
+                    "type": "integer"
                 },
                 "description": {
                     "type": "string"
                 },
+                "end_at": {
+                    "type": "string"
+                },
+                "end_price": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "notify": {
+                    "type": "boolean"
+                },
+                "start_at": {
+                    "type": "string"
+                },
+                "start_price": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "step_price": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "winner_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.User": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "type": "string"
+                },
                 "destroyed_at": {
+                    "type": "string"
+                },
+                "email": {
                     "type": "string"
                 },
                 "id": {
@@ -126,39 +462,146 @@
                 "name": {
                     "type": "string"
                 },
-                "price": {
-                    "type": "number"
-                },
-                "product_type": {
+                "role": {
                     "type": "integer"
-                },
-                "sku": {
-                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "v1.listCompanyResponse": {
+        "v1.authUser": {
             "type": "object",
             "properties": {
-                "companies": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.listBidResponse": {
+            "type": "object",
+            "properties": {
+                "bids": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.Company"
+                        "$ref": "#/definitions/entity.Bid"
                     }
                 }
             }
         },
-        "v1.listProductResponse": {
+        "v1.listLotResponse": {
             "type": "object",
             "properties": {
-                "products": {
+                "lots": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.Product"
+                        "$ref": "#/definitions/entity.Lot"
                     }
+                }
+            }
+        },
+        "v1.listUserResponse": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.User"
+                    }
+                }
+            }
+        },
+        "v1.lotRequest": {
+            "type": "object",
+            "properties": {
+                "lot": {
+                    "$ref": "#/definitions/entity.BaseLot"
+                }
+            }
+        },
+        "v1.lotResponse": {
+            "type": "object",
+            "properties": {
+                "lot": {
+                    "$ref": "#/definitions/entity.Lot"
+                }
+            }
+        },
+        "v1.lotUpdate": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "Some Precious Items"
+                },
+                "end_at": {
+                    "type": "string",
+                    "example": "2022-09-09T13:45:00+03:00"
+                },
+                "notify": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "start_at": {
+                    "type": "string",
+                    "example": "2022-09-09T12:45:00+03:00"
+                },
+                "start_price": {
+                    "type": "integer",
+                    "example": 100000
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "step_price": {
+                    "type": "integer",
+                    "example": 15000
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Lot #1"
+                }
+            }
+        },
+        "v1.lotUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "lot": {
+                    "$ref": "#/definitions/v1.lotUpdate"
+                }
+            }
+        },
+        "v1.registerUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.showUserResponse": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/entity.User"
+                }
+            }
+        },
+        "v1.tokenResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
                 }
             }
         }

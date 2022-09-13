@@ -12,3 +12,6 @@ logger:
 postgres:
   pool_max: 2
   pg_url: 'postgres://elotro@localhost/auctiongo_dev'
+
+jwt:
+  secret: 'pei3einoh0Beem6uM6Ungohn2heiv5lah1ael4joopie5JaigeikoozaoTew2Eh6'
