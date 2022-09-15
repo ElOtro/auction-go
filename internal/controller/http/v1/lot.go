@@ -53,6 +53,7 @@ type lotUpdateRequest struct {
 // @Accept      json
 // @Produce     json
 // @Success     200 {object} listLotResponse
+// @Failure     500
 // @Router      /lots [get]
 func (c *LotController) List(w http.ResponseWriter, r *http.Request) {
 	lots, err := c.uc.List()
@@ -158,7 +159,7 @@ func (c *LotController) Create(w http.ResponseWriter, r *http.Request) {
 
 	// Write a JSON response with a 201 Created status code, the lot data in the
 	// response body, and the Location header.
-	err = writeJSON(w, http.StatusCreated, envelope{"data": lot}, headers)
+	err = writeJSON(w, http.StatusCreated, envelope{"lot": lot}, headers)
 	if err != nil {
 		serverErrorResponse(w, r, err)
 	}
@@ -172,7 +173,7 @@ func (c *LotController) Create(w http.ResponseWriter, r *http.Request) {
 // @Tags        lots
 // @Accept      json
 // @Produce     json
-// @Param       id  path     int        true "Lot ID" Format(int64)
+// @Param       id  path     int              true "Lot ID" Format(int64)
 // @Param       lot body     lotUpdateRequest true "Update Lot"
 // @Success     200 {object} lotResponse
 // @Failure     400

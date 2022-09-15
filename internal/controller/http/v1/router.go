@@ -62,9 +62,11 @@ func (h *Handlers) Routes() *chi.Mux {
 				r.Post("/", h.controllers.Lot.Create)
 				r.Patch("/{ID}", h.controllers.Lot.Update)
 				r.Delete("/{ID}", h.controllers.Lot.Delete)
+				// bids
+				r.Get("/{ID}/bids", h.controllers.Bid.List)
+				r.Post("/{ID}/bids", h.controllers.Bid.Create)
 			}
 		})
-
 	})
 
 	return mux

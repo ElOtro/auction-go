@@ -51,30 +51,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/bids": {
-            "get": {
-                "description": "Show all bid list",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "bids"
-                ],
-                "summary": "Show bid list",
-                "operationId": "bidList",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.listBidResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/lots": {
             "get": {
                 "description": "Show all lot list",
@@ -95,6 +71,9 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/v1.listLotResponse"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             },
@@ -257,6 +236,81 @@ const docTemplate = `{
                 }
             }
         },
+        "/lots/{id}/bids": {
+            "get": {
+                "description": "Show all bid list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bids"
+                ],
+                "summary": "Show bid list",
+                "operationId": "bidList",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Lot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.listBidResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "description": "create bid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bids"
+                ],
+                "summary": "Create bid",
+                "operationId": "create-bid",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Lot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "add by json user",
@@ -395,6 +449,9 @@ const docTemplate = `{
                 "lot_id": {
                     "type": "integer"
                 },
+                "price": {
+                    "type": "integer"
+                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -481,10 +538,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "test@example.com"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "12345678"
                 }
             }
         },
@@ -586,13 +645,16 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "test@example.com"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Test User"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "12345678"
                 }
             }
         },

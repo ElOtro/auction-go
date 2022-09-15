@@ -15,6 +15,6 @@ func NewUseCases(repos *repo.Repo) UseCases {
 	return UseCases{
 		User: *NewUserUseCase(&repos.Users),
 		Lot:  *NewLotUseCase(&repos.Lots),
-		Bid:  *NewBidUseCase(&repos.Bids),
+		Bid:  *NewBidUseCase(&repos.Bids, &repos.Lots),
 	}
 }

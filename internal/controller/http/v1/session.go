@@ -24,14 +24,14 @@ type SessionController struct {
 }
 
 type registerUser struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name     string `json:"name" example:"Test User"`
+	Email    string `json:"email" example:"test@example.com"`
+	Password string `json:"password" example:"12345678"`
 }
 
 type authUser struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" example:"test@example.com"`
+	Password string `json:"password" example:"12345678"`
 }
 
 type tokenResponse struct {

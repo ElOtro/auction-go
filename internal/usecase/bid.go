@@ -1,24 +1,25 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/ElOtro/auction-go/internal/entity"
 )
 
 type BidRepository interface {
 	GetAll(lotID int64) ([]*entity.Bid, error)
+	Insert(bid *entity.Bid) error
 }
 
 // BidUseCase -.
 type BidUseCase struct {
-	repo BidRepository
+	repo    BidRepository
+	lotRepo LotRepository
 }
 
 // New -.
-func NewBidUseCase(r BidRepository) *BidUseCase {
+func NewBidUseCase(r BidRepository, lr LotRepository) *BidUseCase {
 	return &BidUseCase{
-		repo: r,
+		repo:    r,
+		lotRepo: lr,
 	}
 }
 
@@ -26,8 +27,18 @@ func NewBidUseCase(r BidRepository) *BidUseCase {
 func (uc *BidUseCase) List(lotID int64) ([]*entity.Bid, error) {
 	companies, err := uc.repo.GetAll(lotID)
 	if err != nil {
-		return nil, fmt.Errorf("BidUseCase - List - s.repo.List: %w", err)
+		return nil, err
 	}
 
 	return companies, nil
+}
+
+// Create - creating a lot in store.
+func (uc *BidUseCase) Create(bid *entity.Bid) error {
+	err := uc.repo.Insert(bid)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
