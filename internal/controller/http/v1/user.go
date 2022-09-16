@@ -34,7 +34,8 @@ type showUserResponse struct {
 // @Tags        users
 // @Accept      json
 // @Produce     json
-// @Success     200 {object} listUserResponse
+// @Param       Authorization header   string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success     200           {object} listUserResponse
 // @Router      /users [get]
 func (c *UserController) List(w http.ResponseWriter, r *http.Request) {
 	users, err := c.uc.List()
@@ -57,7 +58,8 @@ func (c *UserController) List(w http.ResponseWriter, r *http.Request) {
 // @Tags        users
 // @Accept      json
 // @Produce     json
-// @Success     200 {object} showUserResponse
+// @Param       Authorization header   string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success     200           {object} showUserResponse
 // @Router      /users/{id} [get]
 func (c *UserController) Show(w http.ResponseWriter, r *http.Request) {
 	id, err := readIDParam("ID", r)

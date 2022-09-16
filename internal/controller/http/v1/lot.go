@@ -52,7 +52,8 @@ type lotUpdateRequest struct {
 // @Tags        lots
 // @Accept      json
 // @Produce     json
-// @Success     200 {object} listLotResponse
+// @Param       Authorization header string     true "Insert your access token" default(Bearer <Add access token here>)
+// @Success     200           {object} listLotResponse
 // @Failure     500
 // @Router      /lots [get]
 func (c *LotController) List(w http.ResponseWriter, r *http.Request) {
@@ -75,8 +76,9 @@ func (c *LotController) List(w http.ResponseWriter, r *http.Request) {
 // @Tags        lots
 // @Accept      json
 // @Produce     json
-// @Param       id path int true "Lot ID" Format(int64)
-// @Success     200 {object} lotResponse
+// @Param       id            path     int    true "Lot ID"                   Format(int64)
+// @Param       Authorization header   string           true "Insert your access token" default(Bearer <Add access token here>)
+// @Success     200           {object} lotResponse
 // @Failure     404
 // @Failure     500
 // @Router      /lots/{id} [get]
@@ -110,12 +112,15 @@ func (c *LotController) Show(w http.ResponseWriter, r *http.Request) {
 // @Tags        lots
 // @Accept      json
 // @Produce     json
-// @Param       lot body lotRequest true "Create Lot"
+// @Param       lot           body   lotRequest true "Create Lot"
+// @Param       Authorization header   string true "Insert your access token" default(Bearer <Add access token here>)
 // @Success     201
 // @Failure     400
 // @Failure     500
 // @Router      /lots [post]
 func (c *LotController) Create(w http.ResponseWriter, r *http.Request) {
+	user := contextGetUser(r)
+
 	var input lotRequest
 
 	err := readJSON(w, r, &input)
@@ -134,6 +139,7 @@ func (c *LotController) Create(w http.ResponseWriter, r *http.Request) {
 		StartAt:     *fields.StartAt,
 		EndAt:       *fields.EndAt,
 		Notify:      fields.Notify,
+		CreatorID:   &user.ID,
 	}
 
 	// Initialize a new Validator instance.
@@ -173,9 +179,10 @@ func (c *LotController) Create(w http.ResponseWriter, r *http.Request) {
 // @Tags        lots
 // @Accept      json
 // @Produce     json
-// @Param       id  path     int              true "Lot ID" Format(int64)
-// @Param       lot body     lotUpdateRequest true "Update Lot"
-// @Success     200 {object} lotResponse
+// @Param       id            path     int              true "Lot ID" Format(int64)
+// @Param       lot           body     lotUpdateRequest true "Update Lot"
+// @Param       Authorization header   string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success     200           {object} lotResponse
 // @Failure     400
 // @Failure     500
 // @Router      /lots/{id} [patch]
@@ -288,7 +295,7 @@ func (c *LotController) Update(w http.ResponseWriter, r *http.Request) {
 // @Tags        lots
 // @Accept      json
 // @Produce     json
-// @Param       id  path     int true "Lot ID" Format(int64)
+// @Param       id path int true "Lot ID" Format(int64)
 // @Success     200
 // @Failure     404
 // @Failure     500

@@ -56,6 +56,7 @@ func (h *Handlers) Routes() *chi.Mux {
 		})
 
 		r.Route("/lots", func(r chi.Router) {
+			r.Use(h.controllers.Session.authenticate)
 			{
 				r.Get("/", h.controllers.Lot.List)
 				r.Get("/{ID}", h.controllers.Lot.Show)

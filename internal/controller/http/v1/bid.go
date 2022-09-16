@@ -33,8 +33,9 @@ type listBidResponse struct {
 // @Tags        bids
 // @Accept      json
 // @Produce     json
-// @Param       id  path     int true "Lot ID" Format(int64)
-// @Success     200 {object} listBidResponse
+// @Param       id            path     int    true "Lot ID"                   Format(int64)
+// @Param       Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success     200           {object} listBidResponse
 // @Failure     500
 // @Router      /lots/{id}/bids [get]
 func (c *BidController) List(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +75,8 @@ func (c *BidController) List(w http.ResponseWriter, r *http.Request) {
 // @Tags        bids
 // @Accept      json
 // @Produce     json
-// @Param       id path int true "Lot ID" Format(int64)
+// @Param       id            path   int    true "Lot ID"                   Format(int64)
+// @Param       Authorization header   string true "Insert your access token" default(Bearer <Add access token here>)
 // @Success     201
 // @Failure     400
 // @Failure     422
