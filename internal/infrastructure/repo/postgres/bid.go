@@ -97,7 +97,7 @@ func (r *BidRepo) Insert(bid *entity.Bid) error {
 	sum += bid.Amount
 	query = `
 		INSERT INTO bids (amount, price, lot_id, bidder_id) VALUES ($1, $2, $3, $4)
-		RETURNING id, price, created_at, updated_at`
+		RETURNING id, bidder_id, price, created_at, updated_at`
 
 	args := []interface{}{
 		&bid.Amount,
@@ -109,6 +109,7 @@ func (r *BidRepo) Insert(bid *entity.Bid) error {
 	// Use the QueryRow() method to execute the SQL query on our connection pool
 	return tx.QueryRow(context.Background(), query, args...).Scan(
 		&bid.ID,
+		&bid.BidderID,
 		&bid.Price,
 		&bid.CreatedAt,
 		&bid.UpdatedAt,
