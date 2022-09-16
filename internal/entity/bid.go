@@ -19,4 +19,5 @@ type Bid struct {
 
 func ValidateBid(v *validator.Validator, bid *Bid) {
 	v.Check(bid.Amount > 0, "start_price", "must be greater than zero")
+	v.Check(*bid.BidderID != 0, "bidder_id", "must be provided")
 }

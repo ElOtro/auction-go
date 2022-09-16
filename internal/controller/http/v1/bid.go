@@ -100,10 +100,12 @@ func (c *BidController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := contextGetUser(r)
+
 	bid := &entity.Bid{
 		Amount:   lot.StepPrice,
 		LotID:    lotID,
-		BidderID: nil,
+		BidderID: &user.ID,
 	}
 
 	// Validate the record, sending the client a 422 Unprocessable Entity
