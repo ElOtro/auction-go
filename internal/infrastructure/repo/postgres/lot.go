@@ -137,7 +137,7 @@ func (r LotRepo) Insert(lot *entity.Lot) error {
 	query := `
 		INSERT INTO lots (status, title, description, start_price, end_price, step_price, creator_id, start_at, end_at, notify) 
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-		RETURNING id, created_at, updated_at`
+		RETURNING id, creator_id, created_at, updated_at`
 
 	args := []interface{}{
 		&lot.Status,
@@ -155,6 +155,7 @@ func (r LotRepo) Insert(lot *entity.Lot) error {
 	// Use the QueryRow() method to execute the SQL query on our connection pool
 	return r.Pool.QueryRow(context.Background(), query, args...).Scan(
 		&lot.ID,
+		&lot.CreatorID,
 		&lot.CreatedAt,
 		&lot.UpdatedAt,
 	)
@@ -165,8 +166,8 @@ func (r LotRepo) Update(lot *entity.Lot) error {
 	query := `
 		UPDATE lots
 		SET status = $1, title = $2, description = $3, start_price = $4, end_price = $5, step_price = $6, 
-		creator_id = $7, winner_id = $8, start_at = $9, end_at = $10, notify = $11, destroyed_at = $12, updated_at = NOW() 
-		WHERE id = $13
+		winner_id = $7, start_at = $8, end_at = $9, notify = $10, destroyed_at = $11, updated_at = NOW() 
+		WHERE id = $12
 		RETURNING updated_at`
 
 	// Create an args slice containing the values for the placeholder parameters.
@@ -177,7 +178,6 @@ func (r LotRepo) Update(lot *entity.Lot) error {
 		&lot.StartPrice,
 		&lot.EndPrice,
 		&lot.StepPrice,
-		&lot.CreatorID,
 		&lot.WinnerID,
 		&lot.StartAt,
 		&lot.EndAt,

@@ -51,30 +51,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/bids": {
-            "get": {
-                "description": "Show all bid list",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "bids"
-                ],
-                "summary": "Show bid list",
-                "operationId": "bidList",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.listBidResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/lots": {
             "get": {
                 "description": "Show all lot list",
@@ -89,12 +65,25 @@ const docTemplate = `{
                 ],
                 "summary": "Show lot list",
                 "operationId": "lotList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/v1.listLotResponse"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             },
@@ -120,6 +109,14 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/v1.lotRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -156,6 +153,14 @@ const docTemplate = `{
                         "description": "Lot ID",
                         "name": "id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -239,6 +244,14 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/v1.lotUpdateRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -250,6 +263,97 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/lots/{id}/bids": {
+            "get": {
+                "description": "Show all bid list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bids"
+                ],
+                "summary": "Show bid list",
+                "operationId": "bidList",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Lot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.listBidResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "description": "create bid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bids"
+                ],
+                "summary": "Create bid",
+                "operationId": "create-bid",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Lot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
                     },
                     "500": {
                         "description": "Internal Server Error"
@@ -308,6 +412,16 @@ const docTemplate = `{
                 ],
                 "summary": "Show user list",
                 "operationId": "userList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -332,6 +446,16 @@ const docTemplate = `{
                 ],
                 "summary": "Show user",
                 "operationId": "user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -393,6 +517,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "lot_id": {
+                    "type": "integer"
+                },
+                "price": {
                     "type": "integer"
                 },
                 "updated_at": {
@@ -481,10 +608,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "test@example.com"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "12345678"
                 }
             }
         },
@@ -586,13 +715,16 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "test@example.com"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Test User"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "12345678"
                 }
             }
         },

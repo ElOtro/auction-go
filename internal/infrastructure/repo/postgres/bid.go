@@ -6,6 +6,7 @@ import (
 
 	"github.com/ElOtro/auction-go/internal/entity"
 	"github.com/ElOtro/auction-go/pkg/postgres"
+	"github.com/jackc/pgx/v4"
 )
 
 // BidRepo -.
@@ -29,7 +30,7 @@ func (r *BidRepo) GetAll(lotID int64) ([]*entity.Bid, error) {
 
 	// Use QueryContext() to execute the query. This returns a sql.Rows resultset
 	// containing the result.
-	rows, err := r.Pool.Query(ctx, query)
+	rows, err := r.Pool.Query(ctx, query, lotID)
 	if err != nil {
 		return nil, err
 	}
@@ -67,4 +68,49 @@ func (r *BidRepo) GetAll(lotID int64) ([]*entity.Bid, error) {
 	}
 
 	return bids, nil
+}
+
+// Insert method for inserting a new record in the table.
+func (r *BidRepo) Insert(bid *entity.Bid) error {
+
+	tx, err := r.Pool.BeginTx(context.Background(), pgx.TxOptions{})
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if err != nil {
+			tx.Rollback(context.Background())
+		} else {
+			tx.Commit(context.Background())
+		}
+	}()
+
+	// Get sum of bids for certain lot
+	query := "SELECT COALESCE(SUM(amount), 0) FROM bids WHERE lot_id = $1"
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	var sum int64
+	err = tx.QueryRow(ctx, query, bid.LotID).Scan(&sum)
+	defer cancel()
+
+	// Define the SQL query for inserting a new record
+	sum += bid.Amount
+	query = `
+		INSERT INTO bids (amount, price, lot_id, bidder_id) VALUES ($1, $2, $3, $4)
+		RETURNING id, price, created_at, updated_at`
+
+	args := []interface{}{
+		&bid.Amount,
+		sum,
+		&bid.LotID,
+		&bid.BidderID,
+	}
+
+	// Use the QueryRow() method to execute the SQL query on our connection pool
+	return tx.QueryRow(context.Background(), query, args...).Scan(
+		&bid.ID,
+		&bid.Price,
+		&bid.CreatedAt,
+		&bid.UpdatedAt,
+	)
 }

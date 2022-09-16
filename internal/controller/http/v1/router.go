@@ -56,15 +56,18 @@ func (h *Handlers) Routes() *chi.Mux {
 		})
 
 		r.Route("/lots", func(r chi.Router) {
+			r.Use(h.controllers.Session.authenticate)
 			{
 				r.Get("/", h.controllers.Lot.List)
 				r.Get("/{ID}", h.controllers.Lot.Show)
 				r.Post("/", h.controllers.Lot.Create)
 				r.Patch("/{ID}", h.controllers.Lot.Update)
 				r.Delete("/{ID}", h.controllers.Lot.Delete)
+				// bids
+				r.Get("/{ID}/bids", h.controllers.Bid.List)
+				r.Post("/{ID}/bids", h.controllers.Bid.Create)
 			}
 		})
-
 	})
 
 	return mux

@@ -31,14 +31,14 @@ type Lot struct {
 	ID          int64      `json:"id"`
 	Status      LotStatus  `json:"status"`
 	Title       string     `json:"title"`
-	Description string     `json:"description,omitempty"`
-	StartPrice  int64      `json:"start_price,omitempty"`
-	EndPrice    int64      `json:"end_price,omitempty"`
-	StepPrice   int64      `json:"step_price,omitempty"`
-	CreatorID   *int64     `json:"creator_id,omitempty"`
+	Description string     `json:"description"`
+	StartPrice  int64      `json:"start_price"`
+	EndPrice    int64      `json:"end_price"`
+	StepPrice   int64      `json:"step_price"`
+	CreatorID   *int64     `json:"creator_id"`
 	WinnerID    *int64     `json:"winner_id,omitempty"`
-	StartAt     time.Time  `json:"start_at,omitempty"`
-	EndAt       time.Time  `json:"end_at,omitempty"`
+	StartAt     time.Time  `json:"start_at"`
+	EndAt       time.Time  `json:"end_at"`
 	Notify      bool       `json:"notify"`
 	DestroyedAt *time.Time `json:"-"`
 	CreatedAt   *time.Time `json:"created_at,omitempty"`
@@ -59,4 +59,5 @@ func ValidateLot(v *validator.Validator, lot *Lot) {
 	v.Check(lot.Title != "", "title", "must be provided")
 	v.Check(lot.Description != "", "description", "must be provided")
 	v.Check(lot.StartPrice > 0, "start_price", "must be greater than zero")
+	v.Check(*lot.CreatorID != 0, "creator_id", "must be provided")
 }

@@ -25,9 +25,7 @@ func NewUserRepo(pg *postgres.Postgres) *UserRepo {
 // GetAll -.
 func (r *UserRepo) GetAll() ([]*entity.User, error) {
 	// Construct the SQL query to retrieve all records.
-	query := `SELECT id, created_at, name, email, password_hash, is_active, updated_at
-			  FROM users 
-			  WHERE destroyed_at IS NULL`
+	query := "SELECT id, active, role, name, email, created_at, updated_at FROM users"
 
 	// Create a context with a 3-second timeout.
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -56,6 +54,7 @@ func (r *UserRepo) GetAll() ([]*entity.User, error) {
 		err := rows.Scan(
 			&user.ID,
 			&user.Active,
+			&user.Role,
 			&user.Name,
 			&user.Email,
 			&user.CreatedAt,
@@ -80,10 +79,7 @@ func (r *UserRepo) GetAll() ([]*entity.User, error) {
 
 // Get the User
 func (r *UserRepo) Get(userID int64) (*entity.User, error) {
-	query := `
-		SELECT id, active, role, name, email, password_hash, created_at, updated_at FROM users
-		WHERE id = $1`
-
+	query := "SELECT id, active, role, name, email, created_at, updated_at FROM users WHERE id = $1"
 	var user entity.User
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -95,7 +91,6 @@ func (r *UserRepo) Get(userID int64) (*entity.User, error) {
 		&user.Role,
 		&user.Name,
 		&user.Email,
-		&user.Password.Hash,
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
@@ -152,6 +147,19 @@ func (r *UserRepo) GetByEmail(email string) (*entity.User, error) {
 
 // Insert the User
 func (r *UserRepo) Insert(user *entity.User) error {
+	tx, err := r.Pool.BeginTx(context.Background(), pgx.TxOptions{})
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if err != nil {
+			tx.Rollback(context.Background())
+		} else {
+			tx.Commit(context.Background())
+		}
+	}()
+
 	query := `
 		INSERT INTO users (name, email, password_hash, active) VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at, updated_at`
@@ -166,7 +174,7 @@ func (r *UserRepo) Insert(user *entity.User) error {
 	// constraint that we set up in the previous chapter. We check for this error
 	// specifically, and return custom ErrDuplicateEmail error instead.
 	var e *pgconn.PgError
-	err := r.Pool.QueryRow(ctx, query, args...).Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt)
+	err = tx.QueryRow(ctx, query, args...).Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		switch {
 		case errors.As(err, &e) && e.Code == pgerrcode.UniqueViolation:
@@ -174,6 +182,12 @@ func (r *UserRepo) Insert(user *entity.User) error {
 		default:
 			return err
 		}
+	}
+
+	query = "INSERT INTO accounts (user_id) VALUES ($1)"
+	_, err = tx.Exec(ctx, query, user.ID)
+	if err != nil {
+		return err
 	}
 
 	return nil

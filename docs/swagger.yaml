@@ -36,6 +36,8 @@ definitions:
         type: integer
       lot_id:
         type: integer
+      price:
+        type: integer
       updated_at:
         type: string
     type: object
@@ -93,8 +95,10 @@ definitions:
   v1.authUser:
     properties:
       email:
+        example: test@example.com
         type: string
       password:
+        example: "12345678"
         type: string
     type: object
   v1.listBidResponse:
@@ -163,10 +167,13 @@ definitions:
   v1.registerUser:
     properties:
       email:
+        example: test@example.com
         type: string
       name:
+        example: Test User
         type: string
       password:
+        example: "12345678"
         type: string
     type: object
   v1.showUserResponse:
@@ -209,28 +216,19 @@ paths:
       summary: Login user
       tags:
       - sessions
-  /bids:
-    get:
-      consumes:
-      - application/json
-      description: Show all bid list
-      operationId: bidList
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v1.listBidResponse'
-      summary: Show bid list
-      tags:
-      - bids
   /lots:
     get:
       consumes:
       - application/json
       description: Show all lot list
       operationId: lotList
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -238,6 +236,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/v1.listLotResponse'
+        "500":
+          description: Internal Server Error
       summary: Show lot list
       tags:
       - lots
@@ -253,6 +253,12 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/v1.lotRequest'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -302,6 +308,12 @@ paths:
         name: id
         required: true
         type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -334,6 +346,12 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/v1.lotUpdateRequest'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -348,6 +366,69 @@ paths:
       summary: Update lot
       tags:
       - lots
+  /lots/{id}/bids:
+    get:
+      consumes:
+      - application/json
+      description: Show all bid list
+      operationId: bidList
+      parameters:
+      - description: Lot ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.listBidResponse'
+        "500":
+          description: Internal Server Error
+      summary: Show bid list
+      tags:
+      - bids
+    post:
+      consumes:
+      - application/json
+      description: create bid
+      operationId: create-bid
+      parameters:
+      - description: Lot ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Create bid
+      tags:
+      - bids
   /register:
     post:
       consumes:
@@ -378,6 +459,13 @@ paths:
       - application/json
       description: Show all user list
       operationId: userList
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -394,6 +482,13 @@ paths:
       - application/json
       description: Show user
       operationId: user
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
